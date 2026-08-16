@@ -1,0 +1,11 @@
+backend 
+cd ecommerce-backend
+cd venv\scripts\
+activate
+cd..
+cd..
+python manage.py runserver
+
+frontend
+cd ecommerce-frontend
+npm run dev
