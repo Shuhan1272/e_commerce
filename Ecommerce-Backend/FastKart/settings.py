@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
      # Third-party apps
     'rest_framework',
     'corsheaders',
@@ -160,13 +161,13 @@ REST_FRAMEWORK = {
     ],
 
     "DEFAULT_THROTTLE_RATES": {
-        "register": "5/hour",
-        "login": "5/hour",
+        "register": "100/hour",
+        "login": "100/hour",
     },
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=200),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=7),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 
     'ROTATE_REFRESH_TOKENS': True,

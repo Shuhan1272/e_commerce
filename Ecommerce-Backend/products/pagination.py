@@ -5,7 +5,7 @@ class ProductPagination(
     PageNumberPagination
 ):
 
-    page_size = 1
+    page_size = 20
 
     page_size_query_param = 'page_size'
 

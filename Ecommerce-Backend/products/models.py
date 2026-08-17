@@ -295,6 +295,25 @@ class ProductVariant(TimeStampedModel):
                 f"{uuid.uuid4().hex[:8].upper()}"
             )
 
+        # First variant becomes default
+        if not ProductVariant.objects.filter(
+            product=self.product
+            ).exclude(pk=self.pk).exists():
+
+            self.is_default = True
+
+        # If this variant is selected as default,
+        # remove default from all other variants
+        if self.is_default:
+            ProductVariant.objects.filter(
+            product=self.product,
+            is_default=True
+            ).exclude(
+            pk=self.pk
+            ).update(
+            is_default=False
+            )
+
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -332,6 +351,28 @@ class ProductImage(TimeStampedModel):
     )
 
     def save(self, *args, **kwargs):
+
+        # First image becomes primary
+        if not ProductImage.objects.filter(
+            variant=self.variant
+        ).exclude(
+            pk=self.pk
+        ).exists():
+
+            self.is_primary = True
+
+        # If this image is primary,
+        # make all other images non-primary
+        if self.is_primary:
+
+            ProductImage.objects.filter(
+                variant=self.variant,
+                is_primary=True
+            ).exclude(
+                pk=self.pk
+            ).update(
+                is_primary=False
+            )
 
         if not self.alt_text:
 

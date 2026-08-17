@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from .models import (
     Category,
@@ -13,7 +14,6 @@ from .models import (
 )
 admin.site.register(Category)
 admin.site.register(Brand)
-admin.site.register(Product)
 admin.site.register(VariantOption)
 admin.site.register(VariantOptionValue)
 admin.site.register(ProductQuestion)
@@ -89,3 +89,59 @@ class ProductVariantAdmin(admin.ModelAdmin):
     inlines = [
         ProductImageInline,
     ]
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+
+    list_display = [
+        'name',
+        'category',
+        'brand',
+        'default_price',
+        'default_image',
+        'is_active',
+        'is_featured',
+    ]
+
+    readonly_fields = [
+        'slug',
+        'default_price',
+        'default_image',
+    ]
+
+    @admin.display(description='Default Price')
+    def default_price(self, obj):
+
+        variant = obj.variants.filter(
+            is_default=True,
+            is_active=True
+        ).first()
+
+        if variant:
+            return variant.discounted_price
+
+        return '-'
+
+    @admin.display(description='Default Image')
+    def default_image(self, obj):
+
+        variant = obj.variants.filter(
+            is_default=True,
+            is_active=True
+        ).first()
+
+        if not variant:
+            return '-'
+
+        image = variant.images.filter(
+            is_primary=True
+        ).first()
+
+        if not image:
+            return '-'
+
+        return format_html(
+            '<img src="{}" width="100" height="100" '
+            'style="object-fit:contain;" />',
+            image.image.url
+        )
